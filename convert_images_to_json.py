@@ -71,9 +71,8 @@ def make_request_json(file_path, output_json, do_resize):
 
   with open(output_json, 'w') as ff:
     # Uses argparse to check permissions, but ignore pre-opened file handle.
-    image = Image.open(file_path)
-    #response = requests.get(file_path)
-    #image = Image.open(StringIO(response.content))
+    response = requests.get(file_path)
+    image = Image.open(StringIO(response.content))
     resized_handle = StringIO()
     is_too_big = ((image.size[0] * image.size[1]) >
                 (desired_width * desired_height))

@@ -1,13 +1,15 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from flask import session
-import requests
 from datetime import datetime as dt
+from google.cloud import storage
+import prediction_helper as pdh
+import digit_prediction_service as dpd
+import digit_image_to_json as conv
 import pyhdb
 import util
-from google.cloud import storage
+import requests
 import os
-import prediction_helper as pdh
-import digit_helper as dph
+
 
 class Brainiac(Flask):
     def __init__(self, import_name):
@@ -17,7 +19,8 @@ class Brainiac(Flask):
 
 app = Brainiac(__name__)
 
-CLOUD_STORAGE_BUCKET = "flaskapp-bucket-flowers"
+# CLOUD_STORAGE_BUCKET = "flaskapp-bucket-flowers"
+CLOUD_STORAGE_BUCKET = "brainiac-bucket"
 
 @app.route('/predict/number', methods=['POST'])
 def upload_number():
@@ -27,10 +30,9 @@ def upload_number():
         uploaded_file = request.files['digitImage']
         url = upload_to_cloud_storage(uploaded_file, name)
         number_out = predict_number(url)
-        print number_out
         delete_blob(CLOUD_STORAGE_BUCKET, name)
-
-    return render_template('upload_success.html', message=message, object='Number', result=number_out)
+    return jsonify("{objectCategory: 'Number' , objectType : '" + str(number_out) +"'}")
+    # return render_template('upload_success.html', message=message, object='Number', result=number_out)
 
 @app.route('/predict/flower', methods=['POST'])
 def upload_flower():
@@ -43,16 +45,15 @@ def upload_flower():
 
         delete_blob(CLOUD_STORAGE_BUCKET, name)
 
-    return render_template('upload_success.html', message=message, object='Flower', result=flower_type)
+    return jsonify("{objectCategory: 'Flower' , objectType : '" + flower_type +"'}")
+    # return render_template('upload_success.html', message=message, object='Flower', result=flower_type)
 
 
 def predict_number(filePath):
-    print('Should Predict Number\n')
-    result = dph.predict_digit(filePath)
+    result = pdh.predict_digit(filePath)
     return result
 
 def predict_flower(filePath):
-    print('Predicting Flower\n')
     result = pdh.predict_flower(filePath)
     return result
 
