@@ -1,0 +1,10 @@
+Flask<1
+google-cloud-storage==1.2.0
+gunicorn==19.7.1
+pyhdb
+requests
+pillow
+google-api-python-client
+scikit-image
+numpy
+opencv-python

@@ -1,0 +1,20 @@
+api_version: 1
+threadsafe: true
+env: flex
+entrypoint: gunicorn -b :$PORT main:app
+runtime: python
+
+#[START env]
+env_variables:
+    CLOUD_STORAGE_BUCKET: flaskapp-bucket-flowers
+
+# [START handlers]
+handlers:
+- url: /static
+  static_dir: static
+- url: /.*
+  script: main.app
+# [END handlers]
+# libraries:
+# - name: ssl
+#   version: 2.7.11
