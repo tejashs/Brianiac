@@ -9,6 +9,7 @@ import pyhdb
 import util
 import requests
 import os
+import json
 
 
 class Brainiac(Flask):
@@ -31,21 +32,30 @@ def upload_number():
         url = upload_to_cloud_storage(uploaded_file, name)
         number_out = predict_number(url)
         delete_blob(CLOUD_STORAGE_BUCKET, name)
-    return jsonify("{objectCategory: 'Number' , objectType : '" + str(number_out) +"'}")
+    # return "Predicted Number is : " + str(number_out)
+    data = {}
+    data['objectCategory'] = 'Number'
+    data['objectType'] = str(number_out)
+    json_data = json.dumps(data)
+    return json_data
     # return render_template('upload_success.html', message=message, object='Number', result=number_out)
 
 @app.route('/predict/flower', methods=['POST'])
 def upload_flower():
     message = 'Flower Image Prediction Invoked!'
+    json_data = {}
     if request:
         name = 'tempImages/flowers/flower_' + str(dt.now()) + '.jpg'
         uploaded_file = request.files['flowerImage']
         url = upload_to_cloud_storage(uploaded_file, name)
-        flower_type = predict_flower(url)
-
+        flower_data = predict_flower(url, 0)
+        # flower_data = predict_flower('flower.jpg', 1)
         delete_blob(CLOUD_STORAGE_BUCKET, name)
-
-    return jsonify("{objectCategory: 'Flower' , objectType : '" + flower_type +"'}")
+        data = {}
+        data['objectCategory'] = 'Flower'
+        data['objectType'] = flower_data[1]
+        json_data = json.dumps(data)
+    return json_data
     # return render_template('upload_success.html', message=message, object='Flower', result=flower_type)
 
 
@@ -53,8 +63,8 @@ def predict_number(filePath):
     result = pdh.predict_digit(filePath)
     return result
 
-def predict_flower(filePath):
-    result = pdh.predict_flower(filePath)
+def predict_flower(filePath, isLocal):
+    result = pdh.predict_flower(filePath, isLocal)
     return result
 
 def connectToHana():
