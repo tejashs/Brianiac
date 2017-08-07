@@ -29,10 +29,10 @@ def predict_digit(image_file_path):
     return category
 
 def getConnection():
-    hostname = '35.185.245.114'
-    host_port = '39015'
-    username = 'SYSTEM'
-    u_password = 'HANAhxe2'
+    hostname = util.HANA_HOSTNAME
+    host_port = util.HANA_PORT
+    username = util.HANA_USERNAME
+    u_password = util.HANA_PASSWORD
     myConnection = db.connect(
           # replace with the ip address of your HXE Host (This may be a virtual machine)
           host=hostname,
@@ -47,8 +47,8 @@ def getConnection():
 
 def readDataFromSAPHana(flower_id):
     connection = getConnection()
-    flower_schema = "ODATASERVICES"
-    flower_table = "FLOWERS"
+    flower_schema = util.FLOWER_SCHEMA#"ODATASERVICES"
+    flower_table = util.FLOWER_DETAILS_TABLE#"FLOWERS"
 
     if not connection.isconnected():
         return 'HANA Server not accessible'
@@ -64,8 +64,6 @@ def readDataFromSAPHana(flower_id):
 
 def get_flower(category):
     result = readDataFromSAPHana(category)
-    # params = util.get_flower_params()
-    # result = params[str(category)]
     return result
 
 def main():

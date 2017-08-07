@@ -1,34 +1,28 @@
-import os
-script_dir = os.path.dirname(__file__)
-config_params_path = "params.config"
-flower_category_file_path = "flower_categories.txt"
+
+# Cloud ML Service related parameters
+CLOUD_ML_PROJECT_NAME="<YOUR_CLOUD_ML_PROJECT_NAME>" # Can be found from the Google Cloud Console
+# Same project is assumed for both Flowers and Digits prediction service
+# eg :'steam-airfoil-169600'
+
+FLOWER_ML_MODEL_NAME="flowers" #"<YOUR_CLOUD_ML_FLOWER_ML_MODEL_NAME>" # Usually "flowers"
+FLOWER_ML_MODEL_VERSION="v1" #"<YOUR_CLOUD_ML_FLOWER_ML_MODEL_VERSION>" # Usually "v1"
+
+DIGIT_ML_MODEL_NAME="MNIST" #"<YOUR_CLOUD_ML_FLOWER_ML_MODEL_NAME>" # Usually "MNIST"
+DIGIT_ML_MODEL_VERSION="v1" #"<YOUR_CLOUD_ML_FLOWER_ML_MODEL_VERSION>" # Usually "v1"
 
 
-HOSTNAME='HOSTNAME'
-PORT='PORT'
-USER='USER'
-PASSWORD='PASSWORD'
-
-NUMBER_SCHEMA='NUMBER_SCHEMA'
-NUMBER_DETAILS_TABLE='NUMBER_DETAILS_TABLE'
-FLOWER_SCHEMA='FLOWER_SCHEMA'
-FLOWER_DETAILS_TABLE='FLOWER_DETAILS_TABLE'
-
-def getParamsFromFile(abs_file_path):
-    with open(abs_file_path) as f:
-       lines = list(f)
-    params = {}
-    for l in lines:
-        l = l.rstrip("\r\n")
-        entry = l.split('=')
-        params[str(entry[0])] = str(entry[1])
-    return params
-
-def get_hana_config_params():
-    path = os.path.join(script_dir, config_params_path)
-    return getParamsFromFile(path)
+# Google Cloud Storage parameters
+CLOUD_STORAGE_BUCKET="<YOUR_CLOUD_STORAGE_BUCKET_NAME>"  #eg:   "brainiac-bucket"
 
 
-def get_flower_params():
-    path = os.path.join(script_dir, flower_category_file_path)
-    return getParamsFromFile(path)
+# HANA Database related parameters
+HANA_HOSTNAME="<YOUR_IP_ADDRESS_FOR_HANA>"
+HANA_PORT="<YOUR_PORT_NUMBER_FOR_HANA>"
+# 39013 is the systemDB port for HXE on the default instance of 90.
+# Replace 90 with your instance number as needed (e.g. 30013 for instance 00)
+# 39013 for Tenant DB
+HANA_USERNAME="<YOUR_HANA_USERNAME>"
+HANA_PASSWORD="<YOUR_HANA_PASSWORD>"
+
+FLOWER_SCHEMA="<YOUR_FLOWER_SCHEMA_NAME>"
+FLOWER_DETAILS_TABLE="<YOUR_FLOWER_DETAILS_TABLE_NAME>"

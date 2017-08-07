@@ -1,5 +1,9 @@
+The categories for flowers based on prediction results are as follows :
+
 0=Daisy
 1=Dandelion
 2=Rose
 3=Sunflower
 4=Tulip
+
+Use the "flowers.sql" to import corresponding data into the HANA database.

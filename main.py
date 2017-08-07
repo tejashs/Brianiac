@@ -20,8 +20,7 @@ class Brainiac(Flask):
 
 app = Brainiac(__name__)
 
-# CLOUD_STORAGE_BUCKET = "flaskapp-bucket-flowers"
-CLOUD_STORAGE_BUCKET = "brainiac-bucket"
+CLOUD_STORAGE_BUCKET = util.CLOUD_STORAGE_BUCKET
 
 @app.route('/predict/number', methods=['POST'])
 def upload_number():
@@ -38,7 +37,6 @@ def upload_number():
     data['objectType'] = str(number_out)
     json_data = json.dumps(data)
     return json_data
-    # return render_template('upload_success.html', message=message, object='Number', result=number_out)
 
 @app.route('/predict/flower', methods=['POST'])
 def upload_flower():
@@ -54,9 +52,12 @@ def upload_flower():
         data = {}
         data['objectCategory'] = 'Flower'
         data['objectType'] = flower_data[1]
+        data['scienceName'] = flower_data[2]
+        data['classification'] = flower_data[3]
+        data['description'] = flower_data[4]
+        data['wikiLink'] = flower_data[5]
         json_data = json.dumps(data)
-    return json_data
-    # return render_template('upload_success.html', message=message, object='Flower', result=flower_type)
+    return json_data    
 
 
 def predict_number(filePath):
@@ -66,29 +67,6 @@ def predict_number(filePath):
 def predict_flower(filePath, isLocal):
     result = pdh.predict_flower(filePath, isLocal)
     return result
-
-def connectToHana():
-    print("Fetch Data from HANA\n")
-
-def getConnection():
-    params = util.getParamsFromFile(None)
-    print(params)
-    return
-    hostname = params[util.HOSTNAME]
-    host_port = params[util.PORT]
-    username = params[util.USER]
-    u_password = params[util.PASSWORD]
-    myConnection = pyhdb.connect(
-          # replace with the ip address of your HXE Host (This may be a virtual machine)
-          host=hostname,
-          # 39013 is the systemDB port for HXE on the default instance of 90.
-          # Replace 90 with your instance number as needed (e.g. 30013 for instance 00)
-          port=int(host_port),
-          #Replace user and password with your user and password.
-          user=username,
-          password=u_password
-          )
-    return myConnection
 
 def upload_to_cloud_storage(uploaded_file, filename):
     gcs = storage.Client()
